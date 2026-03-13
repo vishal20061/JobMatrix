@@ -28,6 +28,10 @@ export const companyRegister = async (req, res) => {
         })
 
         company.save();
+        return res.status(200).json({
+            company,
+            success: true
+        })
 
     } catch (e) {
         console.log(e)

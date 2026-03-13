@@ -5,7 +5,7 @@ export const postJob = async (req, res) => {
         let { title, description, requirements, experience, salary, location, jobType, position, company } =
             req.body;
         let userId = req.id;
-        if (!title || !description || !requirements || !experience || !salary || !location || !jobType || !position, company) {
+        if (!title || !description || !requirements || !experience || !salary || !location || !jobType || !position, !company) {
             return res.status(400).json({
                 message: "Something is missing!",
                 success: false
