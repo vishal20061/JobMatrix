@@ -24,7 +24,7 @@ app.use(cookieParser());
 
 const corsOptions = {
     origin: "http://localhost:5173",
-    Credential: true
+    credentials: true
 }
 
 app.use(cors(corsOptions));
