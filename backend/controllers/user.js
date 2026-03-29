@@ -1,10 +1,13 @@
 import { User } from "../models/user.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import cloudinary from "../utils/cloudinary.js";
+
 
 export const register = async (req, res) => {
     try {
         let { fullName, email, phoneNum, password, role } = req.body;
+        console.log(req.body);
         if (!fullName || !email || !phoneNum || !password || !role) {
             return res.status(400).json({
                 message: "Something is missing!",
@@ -104,12 +107,16 @@ export const login = async (req, res) => {
 
 export const logout = async (req, res) => {
     try {
-        return res.status(200).cookie("token", "", { maxAge: 0 }).json({
+        return res.status(200).cookie("token", "", {
+            maxAge: 0,  // ✅ cookie turant delete
+            httpOnly: true,
+            sameSite: 'strict'
+        }).json({
             success: true,
-            message: "Logout successfully"
+            message: "Logged out successfully"
         })
     } catch (e) {
-        console.log(e)
+        console.log(e);
     }
 }
 
@@ -126,12 +133,23 @@ export const updateProfile = async (req, res) => {
 
         let userId = req.id;
 
+        let resumeUrl, resumeOriginalName;
+        if (file) {
+            const cloudResponse = await cloudinary.uploader.upload(
+                `data:${file.mimetype};base64,${file.buffer.toString("base64")}`,
+                { resource_type: "auto" }
+            );
+            resumeUrl = cloudResponse.secure_url;
+            resumeOriginalName = file.originalname;
+        }
+
         let user = await User.findByIdAndUpdate(userId, {
             fullName,
             email,
             phoneNum,
             "profile.bio": bio,
-            "profile.skills": skillsArr
+            "profile.skills": skillsArr,
+            "profile.resume": resumeUrl
         }, { new: true });
 
         if (!user) {
@@ -143,7 +161,7 @@ export const updateProfile = async (req, res) => {
 
         user = {
             _id: user._id,
-            fullname: user.fullName,
+            fullName: user.fullName,
             email: user.email,
             phoneNumber: user.phoneNum,
             role: user.role,
@@ -155,6 +173,17 @@ export const updateProfile = async (req, res) => {
             user,
             message: "Profile Updated Successfully!",
         })
+    } catch (e) {
+        console.log(e);
+    }
+}
+
+export const getProfile = async (req, res) => {
+    try {
+        const user = await User.findById(req.id).select("-password");
+        if (!user) return res.status(404).json({ success: false });
+
+        return res.status(200).json({ success: true, user });
     } catch (e) {
         console.log(e);
     }

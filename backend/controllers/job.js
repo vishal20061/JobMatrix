@@ -5,7 +5,7 @@ export const postJob = async (req, res) => {
         let { title, description, requirements, experience, salary, location, jobType, position, company } =
             req.body;
         let userId = req.id;
-        if (!title || !description || !requirements || !experience || !salary || !location || !jobType || !position, !company) {
+        if (!title || !description || !requirements || !experience || !salary || !location || !jobType || !position || !company) {
             return res.status(400).json({
                 message: "Something is missing!",
                 success: false
@@ -15,11 +15,11 @@ export const postJob = async (req, res) => {
             title,
             description,
             requirements: requirements.split(","),
-            experienceLevel: experience,
+            experienceLevel: Number(experience),
             salary: Number(salary),
             location,
             jobType,
-            position,
+            position: Number(position),
             company,
             created_by: userId
         })
@@ -100,5 +100,64 @@ export const getAdminJobs = async (req, res) => {
         })
     } catch (e) {
         console.log(e)
+    }
+}
+
+export const updateJob = async (req, res) => {
+    try {
+        const { title, description, requirements, salary, location, jobType, experience, position, company } = req.body;
+        const jobId = req.params.id;
+
+        const updateData = {
+            title,
+            description,
+            requirements: requirements.split(","),
+            experienceLevel: Number(experience),
+            salary: Number(salary),
+            location,
+            jobType,
+            position: Number(position),
+            company,
+        };
+
+        const job = await Job.findByIdAndUpdate(jobId, updateData, { new: true });
+
+        if (!job) {
+            return res.status(404).json({
+                message: "Job not found.",
+                success: false
+            })
+        };
+
+        return res.status(200).json({
+            message: "Job updated successfully.",
+            job,
+            success: true
+        })
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: "Server error", success: false });
+    }
+}
+
+
+export const deleteJob = async (req, res) => {
+    try {
+        const jobId = req.params.id;
+        const job = await Job.findByIdAndDelete(jobId);
+        
+        if (!job) {
+            return res.status(404).json({
+                message: "Job not found.",
+                success: false
+            })
+        }
+        return res.status(200).json({
+            message: "Job deleted successfully.",
+            success: true
+        })
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: "Server error", success: false });
     }
 }
