@@ -12,6 +12,7 @@ const ApplicantsTable = ({ applicants }) => {
         try {
             axios.defaults.withCredentials = true;
             const res = await axios.post(`${APPLICATION_API_END_POINT}/status/${id}/update`, { status });
+            console.log(res.data)
             if (res.data.success) {
                 toast.success(res.data.message);
             }
@@ -59,7 +60,7 @@ const ApplicantsTable = ({ applicants }) => {
                                 <td className='px-6 py-5 border-y border-gray-100 group-hover:border-[#6A38C2]/20'>
                                     <div className='flex items-center gap-2 text-gray-600'>
                                         <Phone size={14} className='text-gray-400' />
-                                        <span className='text-sm font-bold'>{item?.applicant?.phoneNumber}</span>
+                                        <span className='text-sm font-bold'>{item?.applicant?.phoneNum}</span>
                                     </div>
                                 </td>
                                 <td className='px-6 py-5 border-y border-gray-100 group-hover:border-[#6A38C2]/20'>

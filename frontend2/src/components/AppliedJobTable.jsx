@@ -19,7 +19,7 @@ const AppliedJobTable = () => {
                 </thead>
                 <tbody>
                     {
-                        allAppliedJobs.length <= 0 ? (
+                        allAppliedJobs?.length <= 0 ? (
                             <tr>
                                 <td colSpan={4} className='py-20 text-center'>
                                     <div className='flex flex-col items-center gap-4'>
@@ -31,7 +31,7 @@ const AppliedJobTable = () => {
                                     </div>
                                 </td>
                             </tr>
-                        ) : allAppliedJobs.map((appliedJob, index) => (
+                        ) : allAppliedJobs?.map((appliedJob, index) => (
                             <motion.tr 
                                 key={appliedJob._id}
                                 initial={{ opacity: 0, y: 10 }}

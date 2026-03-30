@@ -125,31 +125,33 @@ const JobDescription = () => {
                         {user?.role !== 'recruiter' && (
                             <div className='flex items-center gap-4'>
                                 {
-                                    user ?
+                                    user ? <div className='flex items-center gap-4'>
                                         <motion.button
                                             whileHover={{ scale: 1.1 }}
                                             whileTap={{ scale: 0.9 }}
                                             onClick={saveJobHandler}
                                             className={`p-5 rounded-2xl border transition-all duration-300 shadow-xl ${isSaved
-                                                    ? 'bg-[#6A38C2]/10 border-[#6A38C2]/20 text-[#6A38C2]'
-                                                    : 'bg-white border-gray-100 text-gray-400 hover:text-[#6A38C2]'
+                                                ? 'bg-[#6A38C2]/10 border-[#6A38C2]/20 text-[#6A38C2]'
+                                                : 'bg-white border-gray-100 text-gray-400 hover:text-[#6A38C2]'
                                                 }`}
                                         >
                                             {isSaved ? <BookmarkCheck size={24} /> : <Bookmark size={24} />}
-                                        </motion.button> : ""
+                                        </motion.button>
+                                        <motion.button
+                                            whileHover={!isApplied ? { scale: 1.05, y: -5 } : {}}
+                                            whileTap={!isApplied ? { scale: 0.95 } : {}}
+                                            onClick={isApplied ? undefined : applyJobHandler}
+                                            disabled={isApplied}
+                                            className={`px-10 py-5 rounded-[1.5rem] font-black text-lg transition-all duration-500 shadow-2xl ${isApplied
+                                                ? 'bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200'
+                                                : 'bg-gradient-to-r from-[#6A38C2] to-[#7209b7] text-white hover:shadow-[#6A38C2]/40 shadow-[#6A38C2]/20'
+                                                }`}
+                                        >
+                                            {isApplied ? 'Already Applied' : 'Apply Now'}
+                                        </motion.button>
+                                    </div> : ""
                                 }
-                                <motion.button
-                                    whileHover={!isApplied ? { scale: 1.05, y: -5 } : {}}
-                                    whileTap={!isApplied ? { scale: 0.95 } : {}}
-                                    onClick={isApplied ? undefined : applyJobHandler}
-                                    disabled={isApplied}
-                                    className={`px-10 py-5 rounded-[1.5rem] font-black text-lg transition-all duration-500 shadow-2xl ${isApplied
-                                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200'
-                                            : 'bg-gradient-to-r from-[#6A38C2] to-[#7209b7] text-white hover:shadow-[#6A38C2]/40 shadow-[#6A38C2]/20'
-                                        }`}
-                                >
-                                    {isApplied ? 'Already Applied' : 'Apply Now'}
-                                </motion.button>
+
                             </div>
                         )}
                     </div>
