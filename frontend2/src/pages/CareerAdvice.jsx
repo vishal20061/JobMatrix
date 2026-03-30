@@ -9,9 +9,9 @@ import FuturisticBackground from '../components/FuturisticBackground';
 
 const CareerAdvice = () => {
     const [messages, setMessages] = useState([
-        { 
-            role: 'assistant', 
-            content: "Hello! I'm your AI Career Advisor. How can I help you today? You can ask me about interview tips, resume improvements, career transitions, or industry trends." 
+        {
+            role: 'assistant',
+            content: "Hello! I'm your AI Career Advisor. How can I help you today? You can ask me about interview tips, resume improvements, career transitions, or industry trends."
         }
     ]);
     const [input, setInput] = useState('');
@@ -34,40 +34,40 @@ const CareerAdvice = () => {
         setIsLoading(true);
 
         try {
-            const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-            const model = "gemini-3-flash-preview";
-            
-            const chat = ai.chats.create({
-                model: model,
+            // Vite specific API Key access
+            const apiKey = "AIzaSyC0F3sLls6h_FaEk894c341bOfaurElY3E";
+
+            if (!apiKey) {
+                throw new Error("API Key missing! Check your .env file for VITE_GEMINI_API_KEY");
+            }
+
+            const ai = new GoogleGenAI({ apiKey: apiKey });
+
+            const response = await ai.models.generateContent({
+                model: "gemini-2.5-flash-lite",
+                contents: [{ parts: [{ text: input }] }],
                 config: {
-                    systemInstruction: "You are an expert Career Advisor at Job Matrix. Your goal is to provide high-quality, professional, and actionable career advice. Help users with resume tips, interview preparation, career pathing, salary negotiations, and skill development. Keep your tone encouraging, professional, and concise. Use markdown for better readability.",
-                },
+                    systemInstruction: "You are an expert Career Advisor at Job Matrix. Help users with resume tips, interview preparation, and career growth. Keep it professional and encouraging.",
+                }
             });
 
-            // Prepare history for context
-            // Note: sendMessage only takes a string message, but we can simulate context by prepending history if needed, 
-            // but for simplicity we'll just send the current message.
-            // For better UX, we could use the chat history feature of the SDK if available.
-            
-            const response = await chat.sendMessage({ message: input });
             const aiMessage = { role: 'assistant', content: response.text };
             setMessages(prev => [...prev, aiMessage]);
         } catch (error) {
-            console.error("AI Error:", error);
-            setMessages(prev => [...prev, { 
-                role: 'assistant', 
-                content: "I'm sorry, I encountered an error. Please try again later." 
+            console.error("AI Error Details:", error);
+            setMessages(prev => [...prev, {
+                role: 'assistant',
+                content: "I'm sorry, I encountered an error. Make sure your API Key is correct in .env and you have restarted the server."
             }]);
         } finally {
             setIsLoading(false);
         }
     };
-
     const clearChat = () => {
         setMessages([
-            { 
-                role: 'assistant', 
-                content: "Hello! I'm your AI Career Advisor. How can I help you today?" 
+            {
+                role: 'assistant',
+                content: "Hello! I'm your AI Career Advisor. How can I help you today?"
             }
         ]);
     };
@@ -76,10 +76,10 @@ const CareerAdvice = () => {
         <div className="min-h-screen bg-gray-50 relative flex flex-col">
             <FuturisticBackground />
             <Navbar />
-            
+
             <main className="flex-1 max-w-5xl mx-auto w-full px-4 py-12 relative z-10 flex flex-col">
                 <div className="text-center mb-12">
-                    <motion.div 
+                    <motion.div
                         initial={{ opacity: 0, scale: 0.8 }}
                         animate={{ opacity: 1, scale: 1 }}
                         className='inline-flex items-center gap-2 px-4 py-2 bg-[#6A38C2]/5 text-[#6A38C2] rounded-full border border-[#6A38C2]/10 mb-6'
@@ -111,7 +111,7 @@ const CareerAdvice = () => {
                                 </div>
                             </div>
                         </div>
-                        <button 
+                        <button
                             onClick={clearChat}
                             className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
                             title="Clear Chat"
@@ -121,7 +121,7 @@ const CareerAdvice = () => {
                     </div>
 
                     {/* Messages Area */}
-                    <div 
+                    <div
                         ref={scrollRef}
                         className="flex-1 overflow-y-auto p-6 space-y-6 scrollbar-hide"
                     >
@@ -134,16 +134,14 @@ const CareerAdvice = () => {
                                     className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                                 >
                                     <div className={`flex gap-3 max-w-[85%] ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
-                                        <div className={`w-8 h-8 rounded-xl flex-shrink-0 flex items-center justify-center shadow-sm ${
-                                            msg.role === 'user' ? 'bg-[#1a1a1a] text-white' : 'bg-[#6A38C2] text-white'
-                                        }`}>
+                                        <div className={`w-8 h-8 rounded-xl flex-shrink-0 flex items-center justify-center shadow-sm ${msg.role === 'user' ? 'bg-[#1a1a1a] text-white' : 'bg-[#6A38C2] text-white'
+                                            }`}>
                                             {msg.role === 'user' ? <User size={16} /> : <Bot size={16} />}
                                         </div>
-                                        <div className={`p-4 rounded-3xl text-sm font-medium leading-relaxed shadow-sm ${
-                                            msg.role === 'user' 
-                                            ? 'bg-[#1a1a1a] text-white rounded-tr-none' 
+                                        <div className={`p-4 rounded-3xl text-sm font-medium leading-relaxed shadow-sm ${msg.role === 'user'
+                                            ? 'bg-[#1a1a1a] text-white rounded-tr-none'
                                             : 'bg-white border border-gray-100 text-gray-800 rounded-tl-none'
-                                        }`}>
+                                            }`}>
                                             <div className="markdown-body">
                                                 <Markdown>{msg.content}</Markdown>
                                             </div>
@@ -153,7 +151,7 @@ const CareerAdvice = () => {
                             ))}
                         </AnimatePresence>
                         {isLoading && (
-                            <motion.div 
+                            <motion.div
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 className="flex justify-start"
@@ -174,21 +172,20 @@ const CareerAdvice = () => {
                     {/* Input Area */}
                     <div className="p-6 bg-white/50 border-t border-gray-100">
                         <form onSubmit={handleSendMessage} className="relative">
-                            <input 
+                            <input
                                 type="text"
                                 value={input}
                                 onChange={(e) => setInput(e.target.value)}
                                 placeholder="Ask about resumes, interviews, or career paths..."
                                 className="w-full pl-6 pr-16 py-4 bg-white border border-gray-100 rounded-2xl focus:ring-4 focus:ring-[#6A38C2]/10 outline-none font-bold text-sm shadow-sm"
                             />
-                            <button 
+                            <button
                                 type="submit"
                                 disabled={!input.trim() || isLoading}
-                                className={`absolute right-2 top-1/2 -translate-y-1/2 p-3 rounded-xl transition-all ${
-                                    input.trim() && !isLoading 
-                                    ? 'bg-[#6A38C2] text-white shadow-lg shadow-[#6A38C2]/20 hover:scale-105' 
+                                className={`absolute right-2 top-1/2 -translate-y-1/2 p-3 rounded-xl transition-all ${input.trim() && !isLoading
+                                    ? 'bg-[#6A38C2] text-white shadow-lg shadow-[#6A38C2]/20 hover:scale-105'
                                     : 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                                }`}
+                                    }`}
                             >
                                 <Send size={20} />
                             </button>
@@ -209,7 +206,7 @@ const CareerAdvice = () => {
 };
 
 const QuickAction = ({ label, icon, onClick }) => (
-    <button 
+    <button
         onClick={onClick}
         className="flex items-center gap-2 px-3 py-1.5 bg-white border border-gray-100 rounded-lg text-[10px] font-black uppercase tracking-widest text-gray-500 hover:border-[#6A38C2] hover:text-[#6A38C2] transition-all shadow-sm"
     >

@@ -1,10 +1,47 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Bookmark, MapPin, Briefcase, DollarSign, Clock, Layout } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
 import { motion } from 'motion/react'
+import { toast } from 'sonner'
+import { setSavedJobs } from '../redux/jobSlice'
 
 const Job = ({ job }) => {
+
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const params = useParams();
+
+    const { savedJobs } = useSelector((store) => store.job);
+    const { user } = useSelector((store) => store.auth);
+
+    const isSaved = savedJobs?.some((savedJob) => savedJob?._id === job?._id);
+
+    const saveJobHandler = () => {
+        if (!job) return;
+        let updatedSavedJobs = [...savedJobs];
+        if (isSaved) {
+            updatedSavedJobs = updatedSavedJobs.filter((savedJob) => savedJob?._id !== job._id);
+            toast.info("Job removed from saved list");
+        } else {
+            updatedSavedJobs.push(job);
+            toast.success("Job saved successfully");
+        }
+        dispatch(setSavedJobs(updatedSavedJobs));
+        localStorage.setItem('savedJobs', JSON.stringify(updatedSavedJobs));
+    }
+
+    useEffect(() => {
+        const localSavedJobs = localStorage.getItem('savedJobs');
+        if (localSavedJobs) {
+            try {
+                const parsedJobs = JSON.parse(localSavedJobs).filter(job => job !== null);
+                dispatch(setSavedJobs(parsedJobs));
+            } catch (error) {
+                console.error("Error parsing savedJobs from localStorage", error);
+            }
+        }
+    }, [dispatch]);
 
     const daysAgoFunction = (mongodbTime) => {
         const createdAt = new Date(mongodbTime);
@@ -14,7 +51,7 @@ const Job = ({ job }) => {
     }
 
     return (
-        <motion.div 
+        <motion.div
             whileHover={{ y: -8, boxShadow: "0 20px 25px -5px rgba(106, 56, 194, 0.1), 0 10px 10px -5px rgba(106, 56, 194, 0.04)" }}
             className='p-6 rounded-2xl bg-white border border-gray-100 shadow-sm transition-all duration-300 flex flex-col h-full'
         >
@@ -23,8 +60,11 @@ const Job = ({ job }) => {
                     <Clock size={12} />
                     <span>{daysAgoFunction(job?.createdAt) === 0 ? "Today" : `${daysAgoFunction(job?.createdAt)} days ago`}</span>
                 </div>
-                <button className='p-2 rounded-full hover:bg-[#6A38C2]/5 text-gray-400 hover:text-[#6A38C2] transition-colors'>
-                    <Bookmark size={18} />
+                <button 
+                    onClick={saveJobHandler}
+                    className='p-2 rounded-full hover:bg-[#6A38C2]/5 text-gray-400 hover:text-[#6A38C2] transition-colors'
+                >
+                    <Bookmark size={18} className={isSaved ? 'fill-[#6A38C2] text-[#6A38C2]' : ''} />
                 </button>
             </div>
 
@@ -62,19 +102,22 @@ const Job = ({ job }) => {
             </div>
 
             <div className='flex items-center gap-3 mt-8'>
-                <motion.button 
+                <motion.button
                     whileTap={{ scale: 0.95 }}
-                    onClick={() => navigate(`/description/${job?._id}`)} 
+                    onClick={() => navigate(`/description/${job?._id}`)}
                     className='flex-1 py-2.5 text-sm font-bold border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors text-gray-700'
                 >
                     Details
                 </motion.button>
-                <motion.button 
-                    whileTap={{ scale: 0.95 }}
-                    className='flex-1 py-2.5 text-sm font-bold bg-[#6A38C2] text-white rounded-xl hover:bg-[#5b30a6] transition-colors shadow-lg shadow-[#6A38C2]/20'
-                >
-                    Save
-                </motion.button>
+                {user && (
+                    <motion.button
+                        whileTap={{ scale: 0.95 }}
+                        onClick={saveJobHandler}
+                        className='flex-1 py-2.5 text-sm font-bold bg-[#6A38C2] text-white rounded-xl hover:bg-[#5b30a6] transition-colors shadow-lg shadow-[#6A38C2]/20'
+                    >
+                        {isSaved ? 'Saved ✓' : 'Save'}
+                    </motion.button>
+                )}
             </div>
         </motion.div>
     )

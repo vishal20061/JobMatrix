@@ -1,5 +1,6 @@
 import { Company } from "../models/company.js";
 import cloudinary from "../utils/cloudinary.js";
+import { Job } from "../models/job.js";
 
 export const companyRegister = async (req, res) => {
     try {
@@ -123,20 +124,24 @@ export const updateCompany = async (req, res) => {
 export const deleteCompany = async (req, res) => {
     try {
         const companyId = req.params.id;
-        
-        // Note: Company delete karne se pehle aap chahein toh uske saare jobs bhi delete kar sakte hain
-        const company = await Company.findByIdAndDelete(companyId);
-        
+
+        const company = await Company.findById(companyId);
         if (!company) {
             return res.status(404).json({
                 message: "Company not found.",
                 success: false
-            })
+            });
         }
+
+        await Job.deleteMany({ company: companyId });
+
+        await Company.findByIdAndDelete(companyId);
+
         return res.status(200).json({
-            message: "Company deleted successfully.",
+            message: "Company and all its associated jobs deleted successfully.",
             success: true
-        })
+        });
+
     } catch (error) {
         console.log(error);
         return res.status(500).json({ message: "Server error", success: false });

@@ -6,6 +6,7 @@ import { ExternalLink, Building2, Briefcase, Calendar } from 'lucide-react'
 
 const SavedJobsTable = () => {
     const { savedJobs } = useSelector(store => store.job);
+    console.log(savedJobs)
     const navigate = useNavigate();
 
     return (
@@ -33,7 +34,7 @@ const SavedJobsTable = () => {
                                 </td>
                             </tr>
                         ) : (
-                            savedJobs?.map((job, index) => (
+                            savedJobs?.filter(job => !!job).map((job, index) => (
                                 <motion.tr
                                     key={job._id}
                                     initial={{ opacity: 0, y: 10 }}
@@ -44,7 +45,7 @@ const SavedJobsTable = () => {
                                     <td className='px-6 py-5 first:rounded-l-2xl last:rounded-r-2xl border-y border-l border-gray-100 group-hover:border-[#6A38C2]/20'>
                                         <div className='flex items-center gap-3'>
                                             <div className='h-10 w-10 rounded-xl bg-white border border-gray-100 flex items-center justify-center overflow-hidden shadow-sm'>
-                                                <img src={job?.company?.logo || "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png"} alt="" className='w-8 h-8 object-contain' />
+                                                <img src={job.company.logo || "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png"} alt="" className='w-8 h-8 object-contain' />
                                             </div>
                                             <span className='font-black text-gray-900'>{job?.company?.name}</span>
                                         </div>
