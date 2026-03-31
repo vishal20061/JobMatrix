@@ -1,10 +1,10 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import axios from 'axios'
 import { USER_API_END_POINT } from '../utils/constant'
 import { setUser } from '../redux/authSlice'
 import { toast } from 'sonner'
-import { Loader2, X, User, Mail, Phone, FileText, Award, Info } from 'lucide-react'
+import { Loader2, X, User, Mail, Phone, FileText, Award, Info, Camera } from 'lucide-react'
 import { motion, AnimatePresence } from 'motion/react'
 
 const UpdateProfileDialog = ({ open, setOpen }) => {
@@ -19,8 +19,32 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
         skills: user?.profile?.skills?.join(', ') || "",
         file: null
     });
+    const [profilePhotoFile, setProfilePhotoFile] = useState(null);
+    const [profilePhotoPreview, setProfilePhotoPreview] = useState(null);
 
     const dispatch = useDispatch();
+
+    useEffect(() => {
+        if (!open || !user) return;
+        setInput({
+            fullName: user.fullName || "",
+            email: user.email || "",
+            phoneNum: user.phoneNum || "",
+            bio: user.profile?.bio || "",
+            skills: user.profile?.skills?.join(', ') || "",
+            file: null
+        });
+        setProfilePhotoFile(null);
+        setProfilePhotoPreview(null);
+    }, [open, user]);
+
+    useEffect(() => {
+        return () => {
+            if (profilePhotoPreview?.startsWith('blob:')) {
+                URL.revokeObjectURL(profilePhotoPreview);
+            }
+        };
+    }, [profilePhotoPreview]);
 
     const changeEventHandler = (e) => {
         setInput({ ...input, [e.target.name]: e.target.value });
@@ -29,6 +53,15 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
     const fileChangeHandler = (e) => {
         const file = e.target.files?.[0];
         setInput({ ...input, file: file || null });
+    }
+
+    const profilePhotoChangeHandler = (e) => {
+        const file = e.target.files?.[0];
+        setProfilePhotoFile(file || null);
+        if (profilePhotoPreview?.startsWith('blob:')) {
+            URL.revokeObjectURL(profilePhotoPreview);
+        }
+        setProfilePhotoPreview(file ? URL.createObjectURL(file) : null);
     }
 
     const submitHandler = async (e) => {
@@ -41,6 +74,9 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
         formData.append("skills", input.skills);
         if (input.file) {
             formData.append("file", input.file);
+        }
+        if (profilePhotoFile) {
+            formData.append("profilePhoto", profilePhotoFile);
         }
         try {
             setLoading(true);
@@ -57,7 +93,7 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
             }
         } catch (error) {
             console.log(error);
-            toast.error(error.response.data.message);
+            toast.error(error.response?.data?.message || "Update failed");
         } finally {
             setLoading(false);
         }
@@ -98,6 +134,31 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
                         </div>
                         
                         <form onSubmit={submitHandler} className='p-8 md:p-10 space-y-8 max-h-[70vh] overflow-y-auto custom-scrollbar'>
+                            <div className='flex flex-col sm:flex-row items-center gap-6 p-6 bg-gray-50 rounded-3xl border border-gray-100'>
+                                <div className='relative shrink-0'>
+                                    <div className='h-28 w-28 rounded-[1.75rem] overflow-hidden border-4 border-white shadow-lg ring-2 ring-[#6A38C2]/20'>
+                                        <img
+                                            src={profilePhotoPreview || user?.profile?.profilePhoto || "https://github.com/shadcn.png"}
+                                            alt="Profile"
+                                            className='w-full h-full object-cover'
+                                            referrerPolicy="no-referrer"
+                                        />
+                                    </div>
+                                    <label className='absolute -bottom-1 -right-1 flex h-10 w-10 cursor-pointer items-center justify-center rounded-2xl bg-[#6A38C2] text-white shadow-lg hover:bg-[#5b30a6] transition-colors'>
+                                        <Camera size={18} />
+                                        <input
+                                            type="file"
+                                            accept="image/jpeg,image/png,image/webp,image/gif"
+                                            className='hidden'
+                                            onChange={profilePhotoChangeHandler}
+                                        />
+                                    </label>
+                                </div>
+                                <div className='text-center sm:text-left flex-1'>
+                                    <p className='text-xs font-black text-gray-400 uppercase tracking-widest mb-1'>Profile photo</p>
+                                </div>
+                            </div>
+
                             <div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
                                 <InputField 
                                     icon={<User size={18} />}

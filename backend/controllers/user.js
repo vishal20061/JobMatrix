@@ -7,7 +7,7 @@ import cloudinary from "../utils/cloudinary.js";
 export const register = async (req, res) => {
     try {
         let { fullName, email, phoneNum, password, role } = req.body;
-        console.log(req.body);
+        const file = req.file; // signup page "file" field bhej raha hai
         if (!fullName || !email || !phoneNum || !password || !role) {
             return res.status(400).json({
                 message: "Something is missing!",
@@ -26,12 +26,28 @@ export const register = async (req, res) => {
 
         const hashedPass = await bcrypt.hash(password, 12);
 
+        let profilePhotoUrl;
+        if (file) {
+            if (!file.mimetype.startsWith("image/")) {
+                return res.status(400).json({
+                    message: "Profile photo must be an image file.",
+                    success: false
+                });
+            }
+            const cloudResponse = await cloudinary.uploader.upload(
+                `data:${file.mimetype};base64,${file.buffer.toString("base64")}`,
+                { resource_type: "image", folder: "jobmatrix/profile_photos" }
+            );
+            profilePhotoUrl = cloudResponse.secure_url;
+        }
+
         let user1 = new User({
             fullName,
             email,
             phoneNum,
             password: hashedPass,
-            role
+            role,
+            ...(profilePhotoUrl && { profile: { profilePhoto: profilePhotoUrl } })
         });
 
         await user1.save();
@@ -123,7 +139,8 @@ export const logout = async (req, res) => {
 export const updateProfile = async (req, res) => {
     try {
         let { fullName, email, phoneNum, bio, skills } = req.body;
-        let file = req.file;
+        const resumeFile = req.files?.file?.[0];
+        const photoFile = req.files?.profilePhoto?.[0];
 
         let skillsArr = [];
 
@@ -134,13 +151,32 @@ export const updateProfile = async (req, res) => {
         let userId = req.id;
 
         let resumeUrl, resumeOriginalName;
-        if (file) {
+        if (resumeFile) {
             const cloudResponse = await cloudinary.uploader.upload(
-                `data:${file.mimetype};base64,${file.buffer.toString("base64")}`,
-                { resource_type: "auto" }
+                `data:${resumeFile.mimetype};base64,${resumeFile.buffer.toString("base64")}`,
+                {
+                    resource_type: "raw",
+                    format: "pdf",
+                    flags: "attachment:false"
+                }
             );
             resumeUrl = cloudResponse.secure_url;
-            resumeOriginalName = file.originalname;
+            resumeOriginalName = resumeFile.originalname;
+        }
+
+        let profilePhotoUrl;
+        if (photoFile) {
+            if (!photoFile.mimetype.startsWith("image/")) {
+                return res.status(400).json({
+                    message: "Profile photo must be an image file.",
+                    success: false
+                });
+            }
+            const cloudResponse = await cloudinary.uploader.upload(
+                `data:${photoFile.mimetype};base64,${photoFile.buffer.toString("base64")}`,
+                { resource_type: "image", folder: "jobmatrix/profile_photos" }
+            );
+            profilePhotoUrl = cloudResponse.secure_url;
         }
 
         let user = await User.findByIdAndUpdate(userId, {
@@ -149,25 +185,27 @@ export const updateProfile = async (req, res) => {
             phoneNum,
             "profile.bio": bio,
             "profile.skills": skillsArr,
-            "profile.resume": resumeUrl
+            ...(resumeUrl && { "profile.resume": resumeUrl }),
+            ...(resumeOriginalName && { "profile.resumeOriginalName": resumeOriginalName }),
+            ...(profilePhotoUrl && { "profile.profilePhoto": profilePhotoUrl })
         }, { new: true });
-
+ 
         if (!user) {
             return res.status(400).json({
                 message: "User not found.",
                 success: false
             })
         }
-
+ 
         user = {
             _id: user._id,
             fullName: user.fullName,
             email: user.email,
-            phoneNumber: user.phoneNum,
+            phoneNum: user.phoneNum,
             role: user.role,
             profile: user.profile
         }
-
+ 
         return res.status(200).json({
             success: true,
             user,
@@ -177,7 +215,7 @@ export const updateProfile = async (req, res) => {
         console.log(e);
     }
 }
-
+ 
 export const getProfile = async (req, res) => {
     try {
         const user = await User.findById(req.id).select("-password");

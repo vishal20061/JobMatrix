@@ -29,7 +29,7 @@ const Profile = () => {
     }, [dispatch]);
 
     return (
-        <motion.div 
+        <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className='min-h-screen relative'
@@ -37,23 +37,23 @@ const Profile = () => {
             <FuturisticBackground />
             <Navbar />
             <div className='max-w-5xl mx-auto px-4 py-10 relative z-10'>
-                <motion.div 
+                <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     className='bg-white/80 backdrop-blur-xl border border-white/20 rounded-[2.5rem] p-8 md:p-12 shadow-2xl shadow-[#6A38C2]/5 mb-10'
                 >
                     <div className='flex flex-col md:flex-row justify-between items-center md:items-start gap-8'>
                         <div className='flex flex-col md:flex-row items-center gap-8'>
-                            <motion.div 
+                            <motion.div
                                 whileHover={{ scale: 1.05 }}
                                 className='h-32 w-32 rounded-[2rem] overflow-hidden border-4 border-[#6A38C2]/20 shadow-xl'
                             >
                                 <img src={user?.profile?.profilePhoto || "https://github.com/shadcn.png"} alt="profile" className='w-full h-full object-cover' referrerPolicy="no-referrer" />
                             </motion.div>
                             <div className='text-center md:text-left'>
-                                <h1 className='font-black text-3xl text-gray-900'>{user?.fullname}</h1>
+                                <h1 className='font-black text-3xl text-gray-900'>{user?.fullName}</h1>
                                 <p className='text-gray-500 mt-2 max-w-md font-medium'>{user?.profile?.bio || "No professional summary added yet."}</p>
-                                
+
                                 <div className='flex flex-wrap justify-center md:justify-start gap-4 mt-6'>
                                     <div className='flex items-center gap-2 text-gray-600 bg-gray-50 px-4 py-2 rounded-2xl border border-gray-100'>
                                         <Mail size={16} className='text-[#6A38C2]' />
@@ -61,15 +61,15 @@ const Profile = () => {
                                     </div>
                                     <div className='flex items-center gap-2 text-gray-600 bg-gray-50 px-4 py-2 rounded-2xl border border-gray-100'>
                                         <Contact size={16} className='text-[#6A38C2]' />
-                                        <span className='text-sm font-bold'>{user?.phoneNumber}</span>
+                                        <span className='text-sm font-bold'>{user?.phoneNum}</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <motion.button 
+                        <motion.button
                             whileHover={{ scale: 1.1 }}
                             whileTap={{ scale: 0.9 }}
-                            onClick={() => setOpen(true)} 
+                            onClick={() => setOpen(true)}
                             className='p-4 rounded-2xl bg-white border border-gray-100 shadow-lg text-[#6A38C2] hover:bg-[#6A38C2] hover:text-white transition-all duration-300'
                         >
                             <Pen size={20} />
@@ -85,8 +85,8 @@ const Profile = () => {
                                 </div>
                                 <div className='flex items-center gap-2 flex-wrap'>
                                     {
-                                        user?.profile?.skills.length !== 0 ? user?.profile?.skills.map((item, index) => (
-                                            <motion.span 
+                                        user?.profile?.skills?.length ? user?.profile?.skills.map((item, index) => (
+                                            <motion.span
                                                 key={index}
                                                 initial={{ opacity: 0, scale: 0.8 }}
                                                 animate={{ opacity: 1, scale: 1 }}
@@ -107,10 +107,11 @@ const Profile = () => {
                                 </div>
                                 {
                                     user?.profile?.resume ? (
-                                        <motion.a 
+                                        <motion.a
                                             whileHover={{ x: 5 }}
-                                            target='blank' 
-                                            href={user?.profile?.resume} 
+                                            target='_blank'
+                                            rel='noreferrer'
+                                            href={`https://docs.google.com/viewer?url=${encodeURIComponent(user?.profile?.resume)}`}
                                             className='flex items-center gap-3 p-4 bg-gray-50 rounded-2xl border border-gray-100 group'
                                         >
                                             <div className='p-2 bg-white rounded-xl text-blue-600 shadow-sm'>
@@ -134,7 +135,7 @@ const Profile = () => {
 
                 {user?.role !== 'recruiter' && (
                     <div className='grid grid-cols-1 gap-10'>
-                        <motion.div 
+                        <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.2 }}
@@ -147,7 +148,7 @@ const Profile = () => {
                             <AppliedJobTable />
                         </motion.div>
 
-                        <motion.div 
+                        <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.3 }}

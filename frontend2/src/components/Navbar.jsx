@@ -136,13 +136,13 @@ const Navbar = () => {
                                     className='flex items-center gap-2 cursor-pointer bg-white/50 p-1 pr-3 rounded-full border border-gray-100'
                                 >
                                     <div className='w-9 h-9 rounded-full overflow-hidden border-2 border-[#6A38C2]'>
-                                        <img src={user?.profile?.profilePhoto || "https://github.com/shadcn.png"} alt="profile" className='w-full h-full object-cover' />
+                                        <img src={user?.profile?.profilePhoto || "https://github.com/shadcn.png"} alt="profile" className='w-full h-full object-cover' referrerPolicy="no-referrer" />
                                     </div>
                                     <ChevronDown size={16} className='text-gray-500 group-hover:rotate-180 transition-transform duration-300' />
                                 </motion.div>
                                 <div className='absolute right-0 mt-3 w-56 bg-white/90 backdrop-blur-xl border border-gray-100 rounded-2xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 translate-y-2 group-hover:translate-y-0'>
                                     <div className='p-5 border-b border-gray-50'>
-                                        <h4 className='font-bold text-sm text-gray-800'>{user?.fullname}</h4>
+                                        <h4 className='font-bold text-sm text-gray-800'>{user?.fullName}</h4>
                                         <p className='text-xs text-gray-400 truncate mt-1'>{user?.profile?.bio || "No bio available"}</p>
                                     </div>
                                     <div className='p-2'>
@@ -210,7 +210,9 @@ const Navbar = () => {
                                 ) : (
                                     <div className='flex flex-col gap-2 border-t border-gray-100 pt-6'>
                                         <Link to="/profile" onClick={() => setIsOpen(false)} className='flex items-center gap-3 p-3 bg-gray-50 rounded-xl'>
-                                            <User size={20} className='text-[#6A38C2]' />
+                                            <div className='h-10 w-10 rounded-full overflow-hidden border-2 border-[#6A38C2] shrink-0'>
+                                                <img src={user?.profile?.profilePhoto || "https://github.com/shadcn.png"} alt="" className='w-full h-full object-cover' referrerPolicy="no-referrer" />
+                                            </div>
                                             <span className='font-medium'>Profile</span>
                                         </Link>
                                         <button onClick={() => { logoutHandler(); setIsOpen(false); }} className='flex items-center gap-3 p-3 text-red-600 font-medium'>
