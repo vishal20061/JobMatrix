@@ -60,12 +60,14 @@ const Job = ({ job }) => {
                     <Clock size={12} />
                     <span>{daysAgoFunction(job?.createdAt) === 0 ? "Today" : `${daysAgoFunction(job?.createdAt)} days ago`}</span>
                 </div>
-                <button 
-                    onClick={saveJobHandler}
-                    className='p-2 rounded-full hover:bg-[#6A38C2]/5 text-gray-400 hover:text-[#6A38C2] transition-colors'
-                >
-                    <Bookmark size={18} className={isSaved ? 'fill-[#6A38C2] text-[#6A38C2]' : ''} />
-                </button>
+                {user ? (
+                    <button
+                        onClick={saveJobHandler}
+                        className='p-2 rounded-full hover:bg-[#6A38C2]/5 text-gray-400 hover:text-[#6A38C2] transition-colors'
+                    >
+                        <Bookmark size={18} className={isSaved ? 'fill-[#6A38C2] text-[#6A38C2]' : ''} />
+                    </button>) : ""
+                }
             </div>
 
             <div className='flex items-center gap-4 my-5'>
