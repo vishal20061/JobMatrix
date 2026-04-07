@@ -26,7 +26,7 @@ const HeroSection = () => {
     }
 
     return (
-        <div className='text-center relative py-24 md:py-32 overflow-hidden'>
+        <div className='text-center relative py-14 md:py-14 overflow-hidden'>
             {/* Decorative Elements */}
             <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full -z-10 opacity-30'>
                 <motion.div 
@@ -112,14 +112,14 @@ const HeroSection = () => {
                                 placeholder='Job title, keywords, or company...'
                                 onChange={(e) => setQuery(e.target.value)}
                                 onKeyPress={(e) => e.key === 'Enter' && searchJobHandler()}
-                                className='outline-none border-none w-full py-5 px-5 text-gray-700 bg-transparent font-semibold text-lg placeholder:text-gray-400'
+                                className='outline-none border-none w-full py-3 px-3 text-gray-700 bg-transparent font-semibold text-lg placeholder:text-gray-400'
                             />
                         </div>
                         <motion.button 
                             whileHover={{ scale: 1.02, x: 2 }}
                             whileTap={{ scale: 0.98 }}
                             onClick={searchJobHandler} 
-                            className='w-full md:w-auto rounded-2xl md:rounded-[1.5rem] bg-[#6A38C2] px-10 py-4 text-white font-black text-lg hover:bg-[#5b30a6] transition-all shadow-xl shadow-[#6A38C2]/30 flex items-center justify-center gap-2'
+                            className='w-full md:w-auto rounded-2xl md:rounded-[1rem] bg-[#6A38C2] px-10 py-4 text-white font-black text-lg hover:bg-[#5b30a6] transition-all shadow-xl shadow-[#6A38C2]/30 flex items-center justify-center gap-2'
                         >
                             Search Jobs
                         </motion.button>
