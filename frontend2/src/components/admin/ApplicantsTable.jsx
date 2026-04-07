@@ -22,7 +22,7 @@ const ApplicantsTable = ({ applicants }) => {
     }
 
     return (
-        <div className='overflow-x-auto custom-scrollbar'>
+        <div className='overflow-x-auto custom-scrollbar h-[45vh]'>
             <table className='w-full text-left border-separate border-spacing-y-3'>
                 <thead>
                     <tr className='text-gray-400'>
