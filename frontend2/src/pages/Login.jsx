@@ -9,6 +9,7 @@ import { setLoading, setUser } from '../redux/authSlice'
 import { Loader2, Mail, Lock, UserCircle } from 'lucide-react'
 import { motion } from 'motion/react'
 import FuturisticBackground from '../components/FuturisticBackground'
+const API_URL = import.meta.env.VITE_API_URL;
 
 const Login = () => {
     const [input, setInput] = useState({
@@ -32,7 +33,7 @@ const Login = () => {
         }
         try {
             dispatch(setLoading(true));
-            const res = await axios.post(`${USER_API_END_POINT}/login`, input, {
+            const res = await axios.post(`${API_URL}/login`, input, {
                 headers: { "Content-Type": "application/json" },
                 withCredentials: true,
             });
@@ -49,7 +50,7 @@ const Login = () => {
     }
 
     return (
-        <motion.div 
+        <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className='min-h-screen relative overflow-hidden'
@@ -57,14 +58,14 @@ const Login = () => {
             <FuturisticBackground />
             <Navbar />
             <div className='flex items-center justify-center max-w-7xl mx-auto px-4 py-20 relative z-10'>
-                <motion.div 
+                <motion.div
                     initial={{ opacity: 0, y: 30, scale: 0.95 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     transition={{ duration: 0.5 }}
                     className='w-full max-w-md bg-white/80 backdrop-blur-xl border border-white/20 rounded-3xl p-8 shadow-2xl shadow-[#6A38C2]/10'
                 >
                     <div className='text-center mb-8'>
-                        <motion.h1 
+                        <motion.h1
                             initial={{ opacity: 0, y: -10 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.2 }}
@@ -142,17 +143,17 @@ const Login = () => {
                                     <Loader2 className='animate-spin' /> Authenticating...
                                 </button>
                             ) : (
-                                <motion.button 
+                                <motion.button
                                     whileHover={{ scale: 1.02 }}
                                     whileTap={{ scale: 0.98 }}
-                                    type="submit" 
+                                    type="submit"
                                     className='w-full py-4 bg-[#6A38C2] text-white rounded-2xl hover:bg-[#5b30a6] transition-all font-bold shadow-lg shadow-[#6A38C2]/20'
                                 >
                                     Login to Account
                                 </motion.button>
                             )
                         }
-                        
+
                         <div className='text-center mt-6'>
                             <p className='text-sm text-gray-600'>
                                 Don't have an account? <Link to="/signup" className='text-[#6A38C2] font-bold hover:underline'>Create Account</Link>

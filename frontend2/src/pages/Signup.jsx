@@ -9,6 +9,7 @@ import { setLoading } from '../redux/authSlice'
 import { Loader2, User, Mail, Phone, Lock, UserCircle, Upload } from 'lucide-react'
 import { motion } from 'motion/react'
 import FuturisticBackground from '../components/FuturisticBackground'
+const API_URL = import.meta.env.VITE_API_URL;
 
 const Signup = () => {
     const [input, setInput] = useState({
@@ -49,7 +50,7 @@ const Signup = () => {
 
         try {
             dispatch(setLoading(true));
-            const res = await axios.post(`${USER_API_END_POINT}/register`, formData, {
+            const res = await axios.post(`${API_URL}/register`, formData, {
                 headers: { 'Content-Type': "multipart/form-data" },
                 withCredentials: true,
             });
