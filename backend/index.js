@@ -17,7 +17,7 @@ const PORT = process.env.PORT || 3000;
 
 const corsOptions = {
     origin: "https://job-matrix-two.vercel.app",
-    origin:"http://localhost:3000",
+    // origin:"http://localhost:3000",
     credentials: true,
 }
 
