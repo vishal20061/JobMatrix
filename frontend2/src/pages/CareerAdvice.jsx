@@ -35,8 +35,7 @@ const CareerAdvice = () => {
 
         try {
             // Vite specific API Key access
-            const apiKey = "AIzaSyC0F3sLls6h_FaEk894c341bOfaurElY3E";
-
+            const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
             if (!apiKey) {
                 throw new Error("API Key missing! Check your .env file for VITE_GEMINI_API_KEY");
             }

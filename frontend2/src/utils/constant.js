@@ -6,7 +6,7 @@ export function cn(...inputs) {
   return twMerge(clsx(inputs))
 }
 
-// export const BASE_URL = "http://localhost:8000";
+export const BASE_URL = "http://localhost:8000";
 
 export const USER_API_END_POINT = `${API_URL}/user`;
 export const JOB_API_END_POINT = `${API_URL}/jobs`;
