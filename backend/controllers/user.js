@@ -124,7 +124,7 @@ export const login = async (req, res) => {
 export const logout = async (req, res) => {
     try {
         return res.status(200).cookie("token", "", {
-            maxAge: 0,  // ✅ cookie turant delete
+            maxAge: 0, 
             httpOnly: true,
             sameSite: 'strict'
         }).json({
