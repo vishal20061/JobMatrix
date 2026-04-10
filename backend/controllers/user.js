@@ -110,7 +110,12 @@ export const login = async (req, res) => {
             role: user.role,
             profile: user.profile
         }
-        return res.status(200).cookie("token", token, { maxAge: 1 * 24 * 60 * 60 * 1000, httpOnly: true, sameSite: 'strict' }).json({
+        return res.status(200).res.cookie("token", token, {
+            maxAge: 1 * 24 * 60 * 60 * 1000,
+            httpOnly: true,
+            sameSite: 'none', // ✅ strict se none karo
+            secure: true      // ✅ ye add karo
+        }).json({
             success: true,
             user,
             message: `Welcome back ${user.fullName}`,
@@ -124,7 +129,7 @@ export const login = async (req, res) => {
 export const logout = async (req, res) => {
     try {
         return res.status(200).cookie("token", "", {
-            maxAge: 0, 
+            maxAge: 0,
             httpOnly: true,
             sameSite: 'strict'
         }).json({
@@ -189,14 +194,14 @@ export const updateProfile = async (req, res) => {
             ...(resumeOriginalName && { "profile.resumeOriginalName": resumeOriginalName }),
             ...(profilePhotoUrl && { "profile.profilePhoto": profilePhotoUrl })
         }, { new: true });
- 
+
         if (!user) {
             return res.status(400).json({
                 message: "User not found.",
                 success: false
             })
         }
- 
+
         user = {
             _id: user._id,
             fullName: user.fullName,
@@ -205,7 +210,7 @@ export const updateProfile = async (req, res) => {
             role: user.role,
             profile: user.profile
         }
- 
+
         return res.status(200).json({
             success: true,
             user,
@@ -215,7 +220,7 @@ export const updateProfile = async (req, res) => {
         console.log(e);
     }
 }
- 
+
 export const getProfile = async (req, res) => {
     try {
         const user = await User.findById(req.id).select("-password");
