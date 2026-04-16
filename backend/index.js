@@ -16,7 +16,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 const corsOptions = {
-    origin: "https://job-matrix-two.vercel.app",
+    origin: "https://jobmatrix1.vercel.app",
     credentials: true,
 }
 
